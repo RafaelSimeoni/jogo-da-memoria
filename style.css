@@ -1,0 +1,68 @@
+html, body {
+    height: 100vh;
+}
+body {
+    margin          : 0;
+    background-color: #f7f7f7;
+    box-sizing      : border-box;
+}
+
+.container {
+    width          : 100vw;
+    display        : flex;
+    justify-content: center;
+    align-items    : center;
+}
+
+.fundo-jogo {
+    width  : 500px;
+    height : 500px;
+    display: grid;
+    grid-template-areas:
+        'verde vermelho'
+        'amarelo azul';
+    gap             : 10px;
+    border          : 1px solid #fff;
+    background-color: #fff;
+    border-radius   : 100%;
+}
+
+.verde {
+    background-color      : #5cb85c;
+    grid-area             : verde;
+    border-top-left-radius: 100%;
+    opacity               : 0.2;
+}
+
+.vermelho {
+    background-color       : #d9534f;
+    grid-area              : vermelho;
+    border-top-right-radius: 100%;
+    opacity                : 0.2;
+}
+
+.amarelo {
+    background-color         : #f0ad4e;
+    grid-area                : amarelo;
+    border-bottom-left-radius: 100%;
+    opacity                  : 0.2;
+}
+
+.azul {
+    background-color          : #0275d8;
+    grid-area                 : azul;
+    border-bottom-right-radius: 100%;
+    opacity                   : 0.2;
+}
+
+.verde:hover,
+.vermelho:hover,
+.amarelo:hover,
+.azul:hover {
+    cursor: pointer;
+}
+
+
+.cor-selecionada {
+    opacity: 1;
+}
