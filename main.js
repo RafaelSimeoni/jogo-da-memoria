@@ -1,132 +1,165 @@
-let ordemDasCores = []
-let ordemDasCoresClicadas = []
+let coresSorteadas = []
+let coresClicadas = []
+let podeClicar = false
 let pontuacao = 0
+let atualizarPontuacao
 
-const verde = document.querySelector('.verde')
-const vermelho = document.querySelector('.vermelho')
-const amarelo = document.querySelector('.amarelo')
-const azul = document.querySelector('.azul')
+const botaoAzul = document.querySelector('.azul')
+const botaoAmarelo = document.querySelector('.amarelo')
+const botaoVermelho = document.querySelector('.vermelho')
+const botaoVerde = document.querySelector('.verde')
 
-//Cria Ordem aleatória de cores
-let sortearCor = () => {
-    let corSorteada = Math.floor(Math.random() * 4)
-    ordemDasCores[ordemDasCores.length] = corSorteada
-    ordemDasCoresClicadas = []
+const btnIniciarJogo = document.querySelector('.btn-iniciar-jogo')
+const tituloJogo = document.querySelector('.titulo-jogo')
 
-    for (let i in ordemDasCores) {
-        let corCriada = criarCor
-            (ordemDasCores[i])
-        acenderCor(corCriada, Number(i) + 1)
-    }
-}
+function iniciarJogo() {
+    coresSorteadas = []
+    coresClicadas = []
+    pontuacao = 0
+    tituloJogo.innerHTML = `Jogo da memória!`
+    btnIniciarJogo.style.display = 'none'
 
-//Acende a próxima cor
-let acenderCor = (elemento, numero) => {
-    numero = numero * 900
-    setTimeout(() => {
-        elemento.classList.add('cor-selecionada')
-    }, numero - 450)
-    setTimeout(() => {
-        elemento.classList.remove('cor-selecionada')
-    }, numero + 200)
-}
-
-//Verifica os acertos dos cliques
-let verificarAcertos = () => {
-    for (let i in ordemDasCoresClicadas) {
-        if (ordemDasCoresClicadas[i] != ordemDasCores[i]) {
-            gameOver()
-            break
-        }
-    }
-    if (ordemDasCoresClicadas.length == ordemDasCores.length) {
-        nivelSeguinte()
-    }
-}
-
-//função para o clique do jogador
-let verificarClique = (cor) => {
-    ordemDasCoresClicadas[ordemDasCoresClicadas.length] = cor
-    criarCor(cor).classList.add('.selecionado')
-
-    setTimeout(() => {
-        criarCor(cor).classList.remove('.selecionado')
-        verificarAcertos()
-    }, 250)
-
-}
-
-//Função que retorna a cor
-let criarCor = (cor) => {
-    if (cor == 0) {
-        return verde
-    } else if (cor == 1) {
-        return vermelho
-    } else if (cor == 2) {
-        return amarelo
-    } else if (cor == 3) {
-        return azul
-    }
-}
-
-//função para próximo nível de jogo
-
-let nivelSeguinte = () => {
-    pontuacao++
+    exibirPontuacao()
     sortearCor()
 }
 
-//Gameover
-
-let gameOver = () => {
-    alert(`Pontuação: ${pontuacao - 1}\nFim de jogo!\nClique em OK para iniciar um novo jogo`)
-    ordemDasCores = []
-    ordemDasCoresClicadas = []
-    iniciarJogo()
+const contadorDePontos = document.querySelector('.pontuacao')
+function exibirPontuacao() {
+    contadorDePontos.style.display = 'block'
+    atualizarPontuacao = setInterval(() => {
+        contadorDePontos.innerHTML = `Pontuação: ${pontuacao}`
+    }, 500);
 }
 
-let iniciarJogo = () => {
-    document.querySelector('.botao').innerHTML = ''
-    pontuacao = 0
+function sortearCor() {
+    coresClicadas = []
 
-    //Atualizar pontuação
-    setInterval(() => {
-        document.querySelector('.pontuacao').innerHTML = `Pontuação: ${pontuacao - 1}`
-    }, 20)
+    let corSorteada = Math.floor(Math.random() * 4)
+    switch (corSorteada) {
+        case 0:
+            coresSorteadas.push('azul')
+            break
+        case 1:
+            coresSorteadas.push('amarelo')
+            break
+        case 2:
+            coresSorteadas.push('vermelho')
+            break
+        case 3:
+            coresSorteadas.push('verde')
+            break
+    }
 
-    nivelSeguinte()
-}
+    //piscar todas as cores sorteadas
+    for (let i in coresSorteadas) {
+        piscarCoresSorteadas(coresSorteadas[i], Number(i) + 1.5)
+    }
 
-verde.onclick = () => {
-    let campoVerde = document.querySelector('.verde')
-    campoVerde.classList.add('cor-selecionada')
+    //Detectar cliques do jogador só após piscar todas as cores
     setTimeout(() => {
-        campoVerde.classList.remove('cor-selecionada')
-    }, 200)
-    verificarClique(0)
+        detectarCliques(true)
+    }, coresSorteadas.length * 1000 + 500);
 }
-vermelho.onclick = () => {
-    let campoVermelho = document.querySelector('.vermelho')
-    campoVermelho.classList.add('cor-selecionada')
+
+function piscarCoresSorteadas(botaoSorteado, tempoParaPiscar) {
+    tempoParaPiscar *= 1000
+    switch (botaoSorteado) {
+        case 'azul':
+            botaoSorteado = botaoAzul
+            break
+        case 'amarelo':
+            botaoSorteado = botaoAmarelo
+            break
+        case 'vermelho':
+            botaoSorteado = botaoVermelho
+            break
+        case 'verde':
+            botaoSorteado = botaoVerde
+            break
+    }
+
     setTimeout(() => {
-        campoVermelho.classList.remove('cor-selecionada')
-    }, 200)
-    verificarClique(1)
-}
-amarelo.onclick = () => {
-    let campoAmarelo = document.querySelector('.amarelo')
-    campoAmarelo.classList.add('cor-selecionada')
+        botaoSorteado.style.opacity = '1'
+    }, tempoParaPiscar - 600)
     setTimeout(() => {
-        campoAmarelo.classList.remove('cor-selecionada')
-    }, 200)
-    verificarClique(2)
+        botaoSorteado.style.opacity = '0.3'
+    }, tempoParaPiscar - 200);
 }
-azul.onclick = () => {
-    let campoAzul = document.querySelector('.azul')
-    campoAzul.classList.add('cor-selecionada')
+
+function detectarCliques(podeClicar) {
+    if (podeClicar === true) {
+        botaoAzul.onclick = () => {
+            piscarCorClicada(botaoAzul)
+            coresClicadas.push('azul')
+            verificarAcertos()
+        }
+        botaoAmarelo.onclick = () => {
+            piscarCorClicada(botaoAmarelo)
+            coresClicadas.push('amarelo')
+            verificarAcertos()
+        }
+        botaoVermelho.onclick = () => {
+            piscarCorClicada(botaoVermelho)
+            coresClicadas.push('vermelho')
+            verificarAcertos()
+        }
+        botaoVerde.onclick = () => {
+            piscarCorClicada(botaoVerde)
+            coresClicadas.push('verde')
+            verificarAcertos()
+        }
+    } else if (podeClicar === false) {
+        botaoAzul.onclick = null
+        botaoAmarelo.onclick = null
+        botaoVermelho.onclick = null
+        botaoVerde.onclick = null
+    }
+}
+
+function piscarCorClicada(corClicada) {
     setTimeout(() => {
-        campoAzul.classList.remove('cor-selecionada')
+        corClicada.style.opacity = '1'
+    }, 0)
+    setTimeout(() => {
+        corClicada.style.opacity = '0.3'
     }, 200)
-    verificarClique(3)
 }
+
+let verificarAcertos = () => {
+    for (let i in coresClicadas) {
+        //Debugando
+        console.log('coresClicadas.length: ' + coresClicadas.length)
+        console.log('coresSorteadas.length: ' + coresSorteadas.length)
+        console.log('i: ' + i)
+        console.log('================')
+
+
+        if (coresClicadas[i] != coresSorteadas[i]) {
+            //Game Over
+            detectarCliques(false)
+            finalizarJogo()
+            return
+        } else if (coresClicadas.length == Number(i) + 1 && coresClicadas.length == coresSorteadas.length) {
+            //Próximo nível
+            pontuacao++
+            detectarCliques(false)
+            sortearCor()
+        }
+    }
+}
+
+function finalizarJogo() {
+    tituloJogo.innerHTML = `Fim de Jogo!`
+    
+    clearInterval(atualizarPontuacao)
+    contadorDePontos.innerHTML = `Sua pontuação final foi: ${pontuacao}`
+
+    btnIniciarJogo.style.display = 'inline-block'
+    btnIniciarJogo.innerText = 'Jogar novamente'
+}
+
+
+
+
+
 
