@@ -127,13 +127,6 @@ function piscarCorClicada(corClicada) {
 
 let verificarAcertos = () => {
     for (let i in coresClicadas) {
-        //Debugando
-        console.log('coresClicadas.length: ' + coresClicadas.length)
-        console.log('coresSorteadas.length: ' + coresSorteadas.length)
-        console.log('i: ' + i)
-        console.log('================')
-
-
         if (coresClicadas[i] != coresSorteadas[i]) {
             //Game Over
             detectarCliques(false)
